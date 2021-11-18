@@ -24,8 +24,9 @@ class Pendu : #Ne vous embêter pas avec une classe. C'est juste pour le côté 
         self.win = False
         self.root = tk.Tk()
         self.root.title("Pendu")
-        self.root.geometry("325x450")
+        self.root.geometry("325x500")
         self.root.grid()
+        self.root.bind('<Return>', self.penduTick)
 
         self.canvas = tk.Canvas(self.root, width = 300, height = 300, background='white')
         self.canvas.grid(column = 0, row = 0, columnspan = 2, padx = 10, pady = 10)
@@ -34,19 +35,19 @@ class Pendu : #Ne vous embêter pas avec une classe. C'est juste pour le côté 
         self.guessEntry.grid(column=0, row=2, columnspan=2, padx=10, pady=10)
 
         self.entryButton = tk.Button(self.root, text = "Enter", command = self.penduTick)
-        self.entryButton.grid(column=1, row=2, padx = 10, pady = 10)
+        self.entryButton.grid(column=1, row=2, padx = 10, pady = 5)
 
         self.restartButton = tk.Button(self.root, text = "Restart", command = self.restart)
-        self.restartButton.grid(column = 1, row = 3, padx=10, pady=10)
+        self.restartButton.grid(column = 1, row = 3, padx=10, pady=5)
 
-        self.wordLabel = tk.Label(self.root, text = "")
-        self.wordLabel.grid(column = 0, row = 1, padx = 10, pady = 10)
+        self.wordLabel = tk.Label(self.root, text = "", font = ("Arial", 15))
+        self.wordLabel.grid(column = 0, row = 1, columnspan = 2, padx = 10, pady = 10, sticky = "NS")
 
         self.triesLabel = tk.Label(self.root, text = "")
-        self.triesLabel.grid(column = 1, row = 1, padx = 10, pady = 10)
+        self.triesLabel.grid(column = 0, row = 3, padx = 10, pady = 10)
 
         self.congratsLabel = tk.Label(self.root, text = "")
-        self.congratsLabel.grid(column = 0, row = 3, padx = 10, pady = 10)
+        self.congratsLabel.grid(column = 0, row = 4, padx = 10, pady = 10)
 
     def restart(self) : #On démarre une nouvelle partie
         self.win = False #Comme on démarre une nouvelle partie, le joueur n'a pas encore gagné
@@ -61,19 +62,22 @@ class Pendu : #Ne vous embêter pas avec une classe. C'est juste pour le côté 
         self.lettresTrouves = []
         self.essaies = 10
         self.canvas.delete('all')
-        self.wordLabel.configure(text = "_"*(len(self.motC)))
+        self.wordLabel.configure(text = " _ "*(len(self.motC)))
         self.triesLabel.configure(text = "You have 10 tries left")
         self.congratsLabel.configure(text = "")
         self.root.update_idletasks()
 
-    def penduTick(self) : #Le code principale quand on clique sur le boutton Entrée
+    def penduTick(self, event = None) : #Le code principale quand on clique sur le boutton Entrée
 
         if self.essaies > 0 and not self.win: #Si on a encore des essaies et qu'on n'a pas encore gagné
             
             #On récupère ce que le joueur à entrée
+            self.congratsLabel.configure(text = "")
             guess = self.guessEntry.get()
-            self.guessEntry.delete(0, -1)
-            
+            self.guessEntry.delete(0, len(guess))
+            if len(guess) != 1 :
+                guess = ""
+                self.congratsLabel.configure(text = "Input only 1 character")
             for c in guess.lower() : #On vérifie si la lettre correspond à une lettre du mot (les lettres qui correspondent ne font pas perdre d'essaies)
                 #On peut rentré plusieurs lettres d'un coup: si le joueur rentre "abcdefg", sa va regarder pour toutes ces lettre si elle est dans le mot.
                 #On perd aussi plus d'essaies si on met plein de lettres qui ne sont pas dans le mot.
@@ -103,7 +107,7 @@ class Pendu : #Ne vous embêter pas avec une classe. C'est juste pour le côté 
                 if i.lower() in self.lettresTrouves : #Si la lettre du mot est connue
                     newText += i #Alors on l'affiche directement
                 else :
-                    newText += "_" #Sinon on affiche un "_"
+                    newText += " _ " #Sinon on affiche un "_"
             
             #Ici on met à jour le texte. Considéré ça comme des prints versions graphiques
             self.wordLabel.configure(text = newText)
@@ -156,5 +160,4 @@ class Pendu : #Ne vous embêter pas avec une classe. C'est juste pour le côté 
 #Pour tout ce qui est dessin à l'écran. C'était soit ça, soit un code qui fait 30-40 lignes de plus pour rien.
 pendu = Pendu()
 pendu.start()
-
 

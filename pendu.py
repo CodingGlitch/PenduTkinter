@@ -84,9 +84,12 @@ class Pendu : #Ne vous embêter pas avec une classe. C'est juste pour le côté 
                 if c in self.motC.lower() :
                     if c not in self.lettresTrouves : #Si la lettre est dans le mot, 
                         self.lettresTrouves.append(c)
-                else : 
-                    self.essaies -= 1 #Mauvaise lettre ? Un essaie en moins et on dessine le pendu un peu plus
-                    self.drawNext()
+                else :
+                    try :
+                        int(c)
+                    except :
+                        self.essaies -= 1 #Mauvaise lettre ? Un essaie en moins et on dessine le pendu un peu plus
+                        self.drawNext()
                     
                 if self.essaies > 0 : #Si on a encore des essaies (donc on peut pas tricher en mettant toutes les lettres de l'alphabet d'un coup)
                     complete = True #On vérifie si le mot est complété par le joueur
